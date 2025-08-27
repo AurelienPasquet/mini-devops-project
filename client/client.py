@@ -1,28 +1,86 @@
-import requests
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, JSONResponse
+import httpx
 
-def main():
-    print("=== Sum Client (FastAPI) ===")
-    print("Enter two numbers to calculate their sum.\n")
+app = FastAPI()
 
-    try:
-        a = int(input("👉 Enter the first number (a): "))
-        b = int(input("👉 Enter the second number (b): "))
-    except ValueError:
-        print("⚠️ Please enter valid integers only.")
-        return
+html_page = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator Client</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        .calculator { display: inline-grid; grid-template-columns: repeat(4, 60px); gap: 5px; }
+        button { padding: 15px; font-size: 18px; border-radius: 8px; cursor: pointer; }
+        input { grid-column: span 4; padding: 10px; font-size: 20px; text-align: right; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h2>Calculator Client</h2>
+    <div class="calculator">
+        <input type="text" id="expression" placeholder="Tapez ou collez un calcul ici">
+        <button onclick="append('7')">7</button>
+        <button onclick="append('8')">8</button>
+        <button onclick="append('9')">9</button>
+        <button onclick="append('/')">/</button>
+        <button onclick="append('4')">4</button>
+        <button onclick="append('5')">5</button>
+        <button onclick="append('6')">6</button>
+        <button onclick="append('*')">*</button>
+        <button onclick="append('1')">1</button>
+        <button onclick="append('2')">2</button>
+        <button onclick="append('3')">3</button>
+        <button onclick="append('-')">-</button>
+        <button onclick="append('0')">0</button>
+        <button onclick="append('.')">.</button>
+        <button onclick="append('(')">(</button>
+        <button onclick="append(')')">)</button>
+        <button onclick="clearInput()">C</button>
+        <button onclick="calculate()" style="grid-column: span 2; background: #4CAF50; color: white;">=</button>
+        <button onclick="append('+')">+</button>
+    </div>
+    <h3 id="result"></h3>
 
-    url = "http://127.0.0.1:8000/sum"
-    payload = {"a": a, "b": b}
+    <script>
+        function append(value) {
+            document.getElementById("expression").value += value;
+        }
+        function clearInput() {
+            document.getElementById("expression").value = "";
+            document.getElementById("result").innerText = "";
+        }
+        async function calculate() {
+            let expr = document.getElementById("expression").value;
+            const response = await fetch("/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ expression: expr })
+            });
+            const data = await response.json();
+            document.getElementById("result").innerText = "Result: " + data.result;
+        }
+    </script>
+</body>
+</html>
+"""
 
-    try:
-        response = requests.post(url, json=payload)
-        if response.status_code == 200:
-            data = response.json()
-            print(f"\n✅ The sum of {a} + {b} = {data['sum']}")
-        else:
-            print("❌ Server error:", response.text)
-    except requests.exceptions.ConnectionError:
-        print("⚠️ Could not connect to the server. Make sure it is running.")
+@app.get("/", response_class=HTMLResponse)
+async def get_page():
+    return html_page
+
+@app.post("/send")
+async def send_to_calculator(request: Request):
+    body = await request.json()
+    expr = body.get("expression", "")
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.post("http://localhost:8000/calculate", json={"expression": expr})
+            result = resp.json().get("result", "Error")
+        except Exception as e:
+            result = f"Error: {e}"
+    return JSONResponse({"result": result})
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    uvicorn.run("client:app", host="0.0.0.0", port=8080, reload=True)
