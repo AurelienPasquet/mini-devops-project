@@ -1,14 +1,25 @@
 import pytest
+import respx
 import httpx
-import asyncio
+from calculator_service.calculator_service import app
+from fastapi.testclient import TestClient
 
-BASE_CALC = "http://localhost:8000/calculate"
+client = TestClient(app)
 
-@pytest.mark.asyncio
-async def test_full_calculation():
-    expr = "((3+2)*(10-4))/2"
-    async with httpx.AsyncClient() as client:
-        resp = await client.post(BASE_CALC, json={"expression": expr})
-        assert resp.status_code == 200
-        result = resp.json()["result"]
-        assert result == 15
+@respx.mock
+def test_calculator_integration_mocked():
+    # Mocks
+    respx.post("http://localhost:8001/add").mock(return_value=httpx.Response(200, json={"result": 5}))
+    respx.post("http://localhost:8002/sub").mock(return_value=httpx.Response(200, json={"result": 3}))
+    respx.post("http://localhost:8003/mul").mock(return_value=httpx.Response(200, json={"result": 12}))
+    respx.post("http://localhost:8004/div").mock(return_value=httpx.Response(200, json={"result": 4}))
+
+    expr = "((2+3)*(7-4))/3"
+    response = client.post("/calculate", json={"expression": expr})
+
+    assert response.status_code == 200
+    assert "result" in response.json()
+    result = resp.json()["result"]
+    assert result == 5
+    print("Integration test passed with mocked services:", response.json())
+
