@@ -25,4 +25,6 @@ jobs:
           pip install pytest pytest-asyncio httpx
 
       - name: Run tests
-        run: pytest tests/ --maxfail=1 --disable-warnings -v
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          pytest tests/ --maxfail=1 --disable-warnings -v
