@@ -2,12 +2,13 @@ name: Python CI
 
 on:
   push:
-    branches: [ main ]
+    branches-ignore: [ ]
   pull_request:
     branches: [ main ]
 
 jobs:
   test:
+    name: Run Python Tests
     runs-on: ubuntu-latest
 
     steps:
