@@ -11,8 +11,8 @@ def test_calculator_integration_mocked():
     # Mocks
     respx.post("http://localhost:8001/add").mock(return_value=httpx.Response(200, json={"result": 5}))
     respx.post("http://localhost:8002/sub").mock(return_value=httpx.Response(200, json={"result": 3}))
-    respx.post("http://localhost:8003/mul").mock(return_value=httpx.Response(200, json={"result": 12}))
-    respx.post("http://localhost:8004/div").mock(return_value=httpx.Response(200, json={"result": 4}))
+    respx.post("http://localhost:8003/mul").mock(return_value=httpx.Response(200, json={"result": 15}))
+    respx.post("http://localhost:8004/div").mock(return_value=httpx.Response(200, json={"result": 5}))
 
     expr = "((2+3)*(7-4))/3"
     response = client.post("/calculate", json={"expression": expr})
