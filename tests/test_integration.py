@@ -19,7 +19,7 @@ def test_calculator_integration_mocked():
 
     assert response.status_code == 200
     assert "result" in response.json()
-    result = resp.json()["result"]
+    result = response.json()["result"]
     assert result == 5
     print("Integration test passed with mocked services:", response.json())
 
