@@ -7,4 +7,4 @@ client = TestClient(app)
 def test_division():
     response = client.post("/div", json={"a": 4, "b": 2})
     assert response.status_code == 200
-    assert response.json() == {"result": 1}
+    assert response.json() == {"result": 2}
