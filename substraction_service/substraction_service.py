@@ -9,8 +9,6 @@ async def sub(request: Request):
     a = data["a"]
     b = data["b"]
     
-    print(f"SUB {a} - {b} = {a - b}")
-    
     return JSONResponse({"result": a - b})
 
 if __name__ == "__main__":

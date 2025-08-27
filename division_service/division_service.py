@@ -9,8 +9,6 @@ async def div(request: Request):
     a = data["a"]
     b = data["b"]
     
-    print(f"DIV {a} / {b} = {"err" if b == 0 else a / b}")
-    
     if b == 0:
         return JSONResponse({"result": "Error: Division by zero"})
     return JSONResponse({"result": a / b})
