@@ -5,6 +5,6 @@ from division_service.division_service import app
 client = TestClient(app)
 
 def test_division():
-    response = client.post("/div", json={"a": 8, "b": 2})
+    response = client.post("/div", json={"a": 30, "b": 10})
     assert response.status_code == 200
-    assert response.json() == {"result": 4}
+    assert response.json() == {"result": 3}
