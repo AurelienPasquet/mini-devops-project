@@ -15,9 +15,7 @@ services = {
 }
 
 async def eval_expr(node):
-    if isinstance(node, ast.Num):  # old Python <=3.7
-        return node.n
-    if isinstance(node, ast.Constant):  # Python 3.8+
+    if isinstance(node, ast.Constant):
         return node.value
     if isinstance(node, ast.BinOp):
         left = await eval_expr(node.left)
