@@ -1,5 +1,16 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
+
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOTENV_PATH = os.path.join(BASE_DIR, "envs", ".env.ports")
+
+if os.path.exists(DOTENV_PATH):
+    load_dotenv(dotenv_path=DOTENV_PATH)
+
+PORT_ADD = os.getenv("PORT_ADD", "8001")
 
 app = FastAPI()
 
@@ -13,4 +24,4 @@ async def add(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("addition_service:app", host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run("addition_service:app", host="0.0.0.0", port=int(PORT_ADD), reload=True)

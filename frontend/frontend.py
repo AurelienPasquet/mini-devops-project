@@ -1,6 +1,17 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 import httpx
+from dotenv import load_dotenv
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOTENV_PATH = os.path.join(BASE_DIR, "envs", ".env.ports")
+
+if os.path.exists(DOTENV_PATH):
+    load_dotenv(dotenv_path=DOTENV_PATH)
+
+PORT_FRONTEND = os.getenv("PORT_FRONTEND", "3000")
+PORT_CALC = os.getenv("PORT_CALC", "8000")
 
 app = FastAPI()
 
@@ -19,7 +30,7 @@ html_page = """
 <body>
     <h2>Calculator</h2>
     <div class="calculator">
-        <input type="text" id="expression" placeholder="Type or paste a calculation here">
+        <input type="text" id="expression" autofocus>
         <button onclick="append('7')">7</button>
         <button onclick="append('8')">8</button>
         <button onclick="append('9')">9</button>
@@ -75,7 +86,7 @@ async def send_to_calculator(request: Request):
     expr = body.get("expression", "")
     async with httpx.AsyncClient() as client:
         try:
-            resp = await client.post("http://localhost:8000/calculate", json={"expression": expr})
+            resp = await client.post(f"http://localhost:{PORT_CALC}/calculate", json={"expression": expr})
             result = resp.json().get("result", "Error")
         except Exception as e:
             result = f"Error: {e}"
@@ -83,4 +94,4 @@ async def send_to_calculator(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("frontend:app", host="0.0.0.0", port=8080, reload=True)
+    uvicorn.run("frontend:app", host="0.0.0.0", port=int(PORT_FRONTEND), reload=True)

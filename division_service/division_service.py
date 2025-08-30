@@ -1,5 +1,16 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
+
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOTENV_PATH = os.path.join(BASE_DIR, "envs", ".env.ports")
+
+if os.path.exists(DOTENV_PATH):
+    load_dotenv(dotenv_path=DOTENV_PATH)
+
+PORT_DIV = os.getenv("PORT_DIV", 8004)
 
 app = FastAPI()
 
@@ -15,4 +26,4 @@ async def div(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("division_service:app", host="0.0.0.0", port=8004, reload=True)
+    uvicorn.run("division_service:app", host="0.0.0.0", port=int(PORT_DIV), reload=True)

@@ -1,5 +1,16 @@
+import os
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOTENV_PATH = os.path.join(BASE_DIR, "envs", ".env.ports")
+
+if os.path.exists(DOTENV_PATH):
+    load_dotenv(dotenv_path=DOTENV_PATH)
+
+PORT_SUB = os.getenv("PORT_SUB", "8002")
 
 app = FastAPI()
 
@@ -13,4 +24,4 @@ async def sub(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("substraction_service:app", host="0.0.0.0", port=8002, reload=True)
+    uvicorn.run("substraction_service:app", host="0.0.0.0", port=int(PORT_SUB), reload=True)

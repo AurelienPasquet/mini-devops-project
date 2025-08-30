@@ -1,23 +1,35 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
+
 import httpx
 import ast
-import operator
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOTENV_PATH = os.path.join(BASE_DIR, "envs", ".env.ports")
+
+if os.path.exists(DOTENV_PATH):
+    load_dotenv(dotenv_path=DOTENV_PATH)
+
+
+PORT_ADD = os.getenv("PORT_ADD", "8001")
+PORT_SUB = os.getenv("PORT_SUB", "8002")
+PORT_MUL = os.getenv("PORT_MUL", "8003")
+PORT_DIV = os.getenv("PORT_DIV", "8004")
+PORT_CALC = os.getenv("PORT_CALC", "8000")
 
 app = FastAPI()
 
-# Map operators to microservices
 services = {
-    ast.Add: "http://localhost:8001/add",
-    ast.Sub: "http://localhost:8002/sub",
-    ast.Mult: "http://localhost:8003/mul",
-    ast.Div: "http://localhost:8004/div",
+    ast.Add: f"http://localhost:{PORT_ADD}/add",
+    ast.Sub: f"http://localhost:{PORT_SUB}/sub",
+    ast.Mult: f"http://localhost:{PORT_MUL}/mul",
+    ast.Div: f"http://localhost:{PORT_DIV}/div",
 }
 
 async def eval_expr(node):
-    if isinstance(node, ast.Num):  # old Python <=3.7
-        return node.n
-    if isinstance(node, ast.Constant):  # Python 3.8+
+    if isinstance(node, ast.Constant):
         return node.value
     if isinstance(node, ast.BinOp):
         left = await eval_expr(node.left)
@@ -43,4 +55,4 @@ async def calculate(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("calculator_service:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("calculator_service:app", host="0.0.0.0", port=int(PORT_CALC), reload=True)
