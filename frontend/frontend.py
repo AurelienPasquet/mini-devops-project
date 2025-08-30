@@ -8,7 +8,7 @@ html_page = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Calculator Client</title>
+    <title>Calculator</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
         .calculator { display: inline-grid; grid-template-columns: repeat(4, 60px); gap: 5px; }
@@ -17,9 +17,9 @@ html_page = """
     </style>
 </head>
 <body>
-    <h2>Calculator Client</h2>
+    <h2>Calculator</h2>
     <div class="calculator">
-        <input type="text" id="expression" placeholder="Tapez ou collez un calcul ici">
+        <input type="text" id="expression" placeholder="Type or paste a calculation here">
         <button onclick="append('7')">7</button>
         <button onclick="append('8')">8</button>
         <button onclick="append('9')">9</button>
@@ -83,4 +83,4 @@ async def send_to_calculator(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("client:app", host="0.0.0.0", port=8080, reload=True)
+    uvicorn.run("frontend:app", host="0.0.0.0", port=8080, reload=True)
