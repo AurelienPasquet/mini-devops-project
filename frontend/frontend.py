@@ -19,7 +19,7 @@ html_page = """
 <body>
     <h2>Calculator</h2>
     <div class="calculator">
-        <input type="text" id="expression" placeholder="Type or paste a calculation here">
+        <input type="text" id="expression" autofocus>
         <button onclick="append('7')">7</button>
         <button onclick="append('8')">8</button>
         <button onclick="append('9')">9</button>
