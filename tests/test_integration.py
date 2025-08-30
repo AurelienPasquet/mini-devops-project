@@ -8,7 +8,7 @@ client = TestClient(app)
 
 @respx.mock
 def test_calculator_integration_mocked():
-    # Mocks
+    
     respx.post("http://localhost:8001/add").mock(return_value=httpx.Response(200, json={"result": 5}))
     respx.post("http://localhost:8002/sub").mock(return_value=httpx.Response(200, json={"result": 3}))
     respx.post("http://localhost:8003/mul").mock(return_value=httpx.Response(200, json={"result": 15}))

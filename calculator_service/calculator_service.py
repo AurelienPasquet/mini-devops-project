@@ -2,11 +2,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import httpx
 import ast
-import operator
 
 app = FastAPI()
 
-# Map operators to microservices
 services = {
     ast.Add: "http://localhost:8001/add",
     ast.Sub: "http://localhost:8002/sub",
